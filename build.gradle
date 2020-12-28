@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.google.guava', name: 'guava', version: '30.1-jre'
+    // https://mvnrepository.com/artifact/com.mpatric/mp3agic
+    compile group: 'com.mpatric', name: 'mp3agic', version: '0.9.1'
+}
