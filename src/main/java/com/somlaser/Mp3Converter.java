@@ -1,3 +1,5 @@
+package com.somlaser;
+
 import com.mpatric.mp3agic.*;
 
 import java.io.File;
