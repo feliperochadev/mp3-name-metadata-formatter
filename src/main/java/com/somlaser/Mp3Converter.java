@@ -14,13 +14,18 @@ import static com.google.common.io.Files.getFileExtension;
 import static com.google.common.io.Files.getNameWithoutExtension;
 
 public class Mp3Converter {
-    ConverterFormat FORMAT = ConverterFormat.LOWER_CASE;
-    List<String> CONVERSABLE_FILE_EXTENSIONS = List.of("mp3");
+    private static final List<String> CONVERSABLE_FILE_EXTENSIONS = List.of("mp3");
+    private final ConverterFormat FORMAT;
+
+    public Mp3Converter(ConverterFormat format) {
+        this.FORMAT = format;
+    }
 
     public void runConverterToDirectory(File currentDirectory, String rootPath, String outputPath) throws IOException {
         var directoryListing = currentDirectory.listFiles();
+        Files.createDirectories(Paths.get(currentDirectory+outputPath));
         for (File file : Objects.requireNonNull(directoryListing)) {
-            var rootSplitPath = currentDirectory.getAbsolutePath().split(rootPath);
+            var rootSplitPath = file.isDirectory() ? file.getAbsolutePath().split(rootPath) : file.getParent().split(rootPath);
             var newPath = rootSplitPath.length > 1 ? rootPath + outputPath + rootSplitPath[1] :
                     rootPath + outputPath;
             if (file.isDirectory()) {
