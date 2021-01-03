@@ -16,9 +16,11 @@ import static com.google.common.io.Files.getNameWithoutExtension;
 public class Mp3Converter {
     private static final List<String> CONVERSABLE_FILE_EXTENSIONS = List.of("mp3");
     private final ConverterFormat FORMAT;
+    private Integer filesConverted;
 
     public Mp3Converter(ConverterFormat format) {
         this.FORMAT = format;
+        this.filesConverted = 0;
     }
 
     public void runConverterToDirectory(File currentDirectory, String rootPath, String outputPath) throws IOException {
@@ -39,17 +41,25 @@ public class Mp3Converter {
                     var fileExtension = getFileExtension(file.getName()).toLowerCase();
                     if (CONVERSABLE_FILE_EXTENSIONS.contains(fileExtension)) {
                         var result = convert(file.getAbsolutePath(), newPath);
-                        if (!result)
-                            System.out.println("Falha ao converter arquivo " + file.getName());
+                        if (result) {
+                            this.filesConverted++;
+                            System.out.println("Arquivo convertido: " + newPath+ "/" +file.getName());
+                        } else {
+                            System.out.println("\u001B[31mFalha ao converter arquivo: " + file.getName());
+                        }
                     }
                 } catch (Exception e) {
-                    System.out.println("Erro " + e.getMessage() +" ao processar o arquivo: " + file.getName());
+                    System.out.println("\u001B[31mErro " + e.getMessage() +" ao processar o arquivo: " + file.getName());
                 }
             }
         }
     }
 
-    public boolean convert(String filePath, String outputPath) throws InvalidDataException, IOException,
+    public Integer getFilesConverted() {
+        return this.filesConverted;
+    }
+
+    private boolean convert(String filePath, String outputPath) throws InvalidDataException, IOException,
             UnsupportedTagException, NotSupportedException {
         var mp3file = new Mp3File(filePath);
 
