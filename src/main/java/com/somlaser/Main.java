@@ -22,7 +22,7 @@ public class Main {
         var pathType = System.getProperty("os.name").toLowerCase().contains("win") ? "\\" : "/";
         var outputDirectory = pathType + "arquivos convertidos " + LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
-        converter.runConverterToDirectory(rootDirectory, rootDirectory.getAbsolutePath(), outputDirectory);
+        converter.runConverterToDirectory(rootDirectory, rootDirectory.getAbsolutePath(), outputDirectory, true);
         System.out.println("\n" + converter.getFilesConverted() + " arquivos convertidos com sucesso na pasta " + outputDirectory);
     }
 }

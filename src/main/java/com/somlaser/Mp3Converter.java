@@ -23,9 +23,10 @@ public class Mp3Converter {
         this.filesConverted = 0;
     }
 
-    public void runConverterToDirectory(File currentDirectory, String rootPath, String outputPath) throws IOException {
+    public void runConverterToDirectory(File currentDirectory, String rootPath, String outputPath, boolean isFirstCall) throws IOException {
         var directoryListing = currentDirectory.listFiles();
-        Files.createDirectories(Paths.get(currentDirectory+outputPath));
+        if (isFirstCall)
+            Files.createDirectories(Paths.get(currentDirectory+outputPath));
         for (File file : Objects.requireNonNull(directoryListing)) {
             var rootSplitPath = file.isDirectory() ? file.getAbsolutePath().split(rootPath) : file.getParent().split(rootPath);
             var newPath = rootSplitPath.length > 1 ? rootPath + outputPath + rootSplitPath[1] :
@@ -33,7 +34,7 @@ public class Mp3Converter {
             if (file.isDirectory()) {
                 if (Files.notExists(Path.of(newPath))) {
                     Files.createDirectories(Paths.get(newPath));
-                    runConverterToDirectory(file, rootPath, outputPath);
+                    runConverterToDirectory(file, rootPath, outputPath, false);
                 }
             }
             else {
