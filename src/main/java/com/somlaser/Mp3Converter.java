@@ -43,7 +43,8 @@ public class Mp3Converter {
                         var result = convert(file.getAbsolutePath(), newPath);
                         if (result) {
                             this.filesConverted++;
-                            System.out.println("Arquivo convertido: " + newPath+ "/" +file.getName());
+                            var pathType = System.getProperty("os.name").toLowerCase().contains("win") ? "\\" : "/";
+                            System.out.println("Arquivo convertido: " + newPath + pathType +file.getName());
                         } else {
                             System.out.println("\u001B[31mFalha ao converter arquivo: " + file.getName());
                         }
