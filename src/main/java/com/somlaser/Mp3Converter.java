@@ -23,6 +23,10 @@ public class Mp3Converter {
         this.filesConverted = 0;
     }
 
+    public static String getPathType() {
+        return System.getProperty("os.name").toLowerCase().contains("win") ? "\\" : "/";
+    }
+
     public void runConverterToDirectory(File currentDirectory, String rootPath, String outputPath, boolean isFirstCall) throws IOException {
         var directoryListing = currentDirectory.listFiles();
         if (isFirstCall)
@@ -44,8 +48,7 @@ public class Mp3Converter {
                         var result = convert(file.getAbsolutePath(), newPath);
                         if (result) {
                             this.filesConverted++;
-                            var pathType = System.getProperty("os.name").toLowerCase().contains("win") ? "\\" : "/";
-                            System.out.println("Arquivo convertido: " + newPath + pathType +file.getName());
+                            System.out.println("Arquivo convertido: " + newPath + getPathType() +file.getName());
                         } else {
                             System.out.println("\u001B[31mFalha ao converter arquivo: " + file.getName());
                         }
@@ -105,7 +108,7 @@ public class Mp3Converter {
         var fileExtension = getFileExtension(mp3file.getFilename());
         var fileName = format(getNameWithoutExtension(mp3file.getFilename()));
 
-        mp3file.save(outputPath + "/" + fileName + "." + fileExtension);
+        mp3file.save(outputPath + getPathType() + fileName + "." + fileExtension);
         return true;
     }
 
