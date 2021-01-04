@@ -1,5 +1,6 @@
 package com.somlaser;
 
+import java.util.Arrays;
 import java.util.List;
 
 public enum ConverterFormat {
@@ -7,6 +8,6 @@ public enum ConverterFormat {
     UPPER_CASE;
 
     public static List<String> getLowerCaseArgValues() {
-        return List.of("l", "lower", "lower_case");
+        return Arrays.asList("l", "lower", "lower_case");
     }
 }

@@ -5,8 +5,8 @@ import com.mpatric.mp3agic.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +14,7 @@ import static com.google.common.io.Files.getFileExtension;
 import static com.google.common.io.Files.getNameWithoutExtension;
 
 public class Mp3Converter {
-    private static final List<String> CONVERSABLE_FILE_EXTENSIONS = List.of("mp3");
+    private static final List<String> CONVERSABLE_FILE_EXTENSIONS = Collections.singletonList("mp3");
     private final ConverterFormat FORMAT;
     private Integer filesConverted;
 
@@ -28,24 +28,25 @@ public class Mp3Converter {
     }
 
     public void runConverterToDirectory(File currentDirectory, String rootPath, String outputPath, boolean isFirstCall) throws IOException {
-        var directoryListing = currentDirectory.listFiles();
+        File[] directoryListing = currentDirectory.listFiles();
         if (isFirstCall)
             Files.createDirectories(Paths.get(currentDirectory+outputPath));
         for (File file : Objects.requireNonNull(directoryListing)) {
-            var rootSplitPath = file.isDirectory() ? file.getAbsolutePath().split(rootPath) : file.getParent().split(rootPath);
-            var newPath = rootSplitPath.length > 1 ? rootPath + outputPath + rootSplitPath[1] :
+            String[] rootSplitPath = file.isDirectory() ? file.getAbsolutePath().split(rootPath.replace("\\", "\\\\")) :
+                    file.getParent().split(rootPath.replace("\\", "\\\\"));
+            String newPath = rootSplitPath.length > 1 ? rootPath + outputPath + rootSplitPath[1] :
                     rootPath + outputPath;
             if (file.isDirectory()) {
-                if (Files.notExists(Path.of(newPath))) {
+                if (Files.notExists(Paths.get(newPath))) {
                     Files.createDirectories(Paths.get(newPath));
                     runConverterToDirectory(file, rootPath, outputPath, false);
                 }
             }
             else {
                 try {
-                    var fileExtension = getFileExtension(file.getName()).toLowerCase();
+                    String fileExtension = getFileExtension(file.getName()).toLowerCase();
                     if (CONVERSABLE_FILE_EXTENSIONS.contains(fileExtension)) {
-                        var result = convert(file.getAbsolutePath(), newPath);
+                        boolean result = convert(file.getAbsolutePath(), newPath);
                         if (result) {
                             this.filesConverted++;
                             System.out.println("Arquivo convertido: " + newPath + getPathType() +file.getName());
@@ -66,7 +67,7 @@ public class Mp3Converter {
 
     private boolean convert(String filePath, String outputPath) throws InvalidDataException, IOException,
             UnsupportedTagException, NotSupportedException {
-        var mp3file = new Mp3File(filePath);
+        Mp3File mp3file = new Mp3File(filePath);
 
         ID3v1 id3v1Tag;
         if (mp3file.hasId3v1Tag()) {
@@ -105,8 +106,8 @@ public class Mp3Converter {
         id3v2Tag.setUrl(format(id3v2Tag.getUrl()));
         id3v2Tag.setEncoder(format(id3v2Tag.getEncoder()));
 
-        var fileExtension = getFileExtension(mp3file.getFilename());
-        var fileName = format(getNameWithoutExtension(mp3file.getFilename()));
+        String fileExtension = getFileExtension(mp3file.getFilename());
+        String fileName = format(getNameWithoutExtension(mp3file.getFilename()));
 
         mp3file.save(outputPath + getPathType() + fileName + "." + fileExtension);
         return true;
